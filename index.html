@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+  <title>菜單產生器</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <!-- Mobile support -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Material Design fonts -->
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <!-- Bootstrap -->
+  <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Bootstrap Material Design -->
+  <link href="css/bootstrap-material-design.css" rel="stylesheet">
+  <link href="css/ripples.min.css" rel="stylesheet">
+
+  <!-- Dropdown.js -->
+  <link href="http://cdn.rawgit.com/FezVrasta/dropdown.js/master/jquery.dropdown.css" rel="stylesheet">
+
+  <!-- Page style -->
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+  <style>
+      body{font-size:15px}
+      .navbar .navbar-brand{color:#fff;font-weight:bold}
+      tr>td:nth-child(2){text-align: right;width:100px;}
+      .table-condensed>tbody>tr>td{padding-left: 30px}
+      tr{background: #fff}
+      .ui-state-highlight { height: 1.5em; line-height: 1.2em; }
+      .ui-sortable-helper {display: table;}      
+      
+      .tempmenu{margin-bottom: 0}
+      .tempmenu td{}
+      .tempmenu tr{cursor:n-resize;background: none}
+      .tempmenu label{position:absolute;width: 110px;margin-left: 15px;margin-top: 2px;}
+      .tempmenu label:hover{color:#000;cursor:pointer}
+      .tempmenu label+label{margin-left: 75px}
+      .tempmenuwrap{background: #F8FFDF;padding:10px}
+      
+      .foodlist{box-shadow: 0 5px 10px #ddd}
+      .foodlist tr{cursor:e-resize}
+      .show::before{
+/*        content:'*';color:red; margin-left: -10px;*/
+          content:'';
+          display: block;
+          position: absolute;
+          margin-left: -25px;
+          background: url(images/pic.png) no-repeat center;
+          width:20px;height:20px;
+          background-size:100% 100%; 
+          opacity: .2
+      }
+      .found{background: yellow}
+      #htmlcode_result{width:100%;height:300px;font-size: 13px;font-family: monospace;}
+  </style>
+
+  <!-- jQuery -->
+  <script src="js/jquery-1.10.2.min.js"></script>
+
+</head>
+<body>
+
+<div class="navbar navbar-warning">
+              <div class="container-fluid">
+                <div class="navbar-header">
+                  <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-warning-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                  </button>
+                  <a class="navbar-brand" href="javascript:void(0)">菜單快速排序 HTML 產生器</a>
+                </div>
+                <div class="navbar-collapse collapse navbar-warning-collapse">
+                  <ul class="nav navbar-nav">
+                    <li><a href="javascript:void(0)" data-toggle="modal" data-target="#about-dialog">關於</a></li>
+                    <li><a href="javascript:void(0)" class="cleartempmenu">清空</a></li>                    
+                  </ul>
+                  <form class="navbar-form navbar-right">
+                    <div class="form-group">
+                      <input type="text" class="form-control col-sm-8" placeholder="搜尋菜色" id="searchfood">
+                    </div>
+                  </form>
+                  <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown active">
+                      <a href="javascript:void(0)" data-target="#" class="dropdown-toggle store_selectd" data-toggle="dropdown"><span>店家A</span>
+                        <b class="caret"></b></a>
+                      <ul class="dropdown-menu">
+                        <li><a href="javascript:void(0)" class="btn_showstoreA">店家A</a></li>
+                        <li><a href="javascript:void(0)" class="btn_showstoreB">店家B</a></li>                        
+                      </ul>
+                    </li>   
+                    <li class="storeA"><a href="#meat">肉類</a></li>
+                    <li class="storeA"><a href="#seafood">海鮮</a></li>
+                    <li class="storeA"><a href="#vegetable">菜/菇/其他類</a></li>
+                    <li class="storeA"><a href="#drink">飲品/用具類</a></li>                    
+                  </ul>
+                </div>
+              </div>
+            </div>
+            
+<div class="container">
+    <div class="row">
+        <div class="col-xs-5 sortwrap">
+           <h2 id="meat">請將菜色拖曳到此處</h2>
+           <div class="foodmenuwrap tempmenuouter">
+               <div class="tempmenuwrap">
+                <table class="table table-condensed foodmenu connectedSortable tempmenu"> 
+                   <tbody>
+                    <tr><td rel="images/toast.jpg" class="show" title="">手工吐司</td><td>1條</td></tr>
+                    <tr><td rel="images/Water.jpg" class="show">大瓶礦泉水</td><td>1瓶</td></tr>
+                    <tr><td>烤肉醬</td><td>1瓶</td></tr>
+                    <tr><td rel="images/acc.jpg" class="show">佐料包</td><td>全套</td></tr>  
+                    <tr><td>烤肉用具組(十人)</td><td>全套</td></tr>    
+                   </tbody>                
+                </table>
+                </div>
+            </div>
+            <a href="javascript:void(0)" class="btn btn-primary tempmenubtn" data-toggle="modal" data-target="#htmlcode">產生html</a>
+        </div>
+        <div class="col-xs-6 col-xs-offset-1 basicwrap text-center storeB" style="display:none">
+            <br>尚未將菜色建檔...
+        </div>
+        <div class="col-xs-6 col-xs-offset-1 basicwrap storeA">
+          
+<!--
+          <div class="input-group">
+              <input type="text" class="form-control">    
+              <button class="btn btn-default searchitem"><span class="glyphicon glyphicon-search"></span>搜尋菜色</button>
+          </div>
+        <p>快速連結:<a href="#meat">肉類</a>/<a href="#seafood">海鮮</a>/<a href="#vegetable">菜/菇/其他類</a>/<a href="#drink">飲品/用具類</a></p>
+-->
+          
+          <h3 id="meat">肉類</h3>
+          <div class="foodmenuwrap">
+           <table class="table table-condensed foodlist connectedSortable">
+               <tbody>
+                <tr><td rel="images/pork1.jpg" class="show">醬醃豬肉排</td><td>600g</td></tr>  
+                <tr><td rel="images/nobonechicken.jpg" class="show">照燒去骨雞腿排</td><td>350g</td></tr>
+                <tr><td rel="images/sausage.jpg" class="show">中式特級香腸</td><td>10條</td></tr>
+                <tr><td rel="images/bacon2.jpg" class="show">嚴選煙燻培根片</td><td>10片</td></tr>            
+                <tr><td rel="images/hotdog10.jpg" class="show">美式熱狗</td><td>10條</td></tr>
+                <tr><td rel="images/streaky.jpg" class="show">醬醃五花肉 </td> <td>250g</td> </tr>                                    
+                <tr><td rel="images/baconroll.jpg" class="show"> 培根百頁捲</td><td>10捲</td></tr>                        
+                <tr><td rel="images/blackbeef.jpg" class="show">黑胡椒牛排</td><td>400g </td></tr>            
+                <tr><td>黃金雞肉捲3條</td><td>1盒</td></tr>
+                <tr><td rel="images/chicken1.jpg" class="show">蔗香燻雞</td><td>1隻</td></tr>
+                <tr><td rel="images/bacon3.JPG" class="show">焗烤洋芋培根塔</td><td>10個</td></tr>
+                <tr><td rel="images/streaky.jpg" class="show">蒜香鹹豬肉</td><td>250g</td></tr>            
+                <tr><td>香檸去骨雞腿排</td><td>500g</td></tr>
+                <tr><td>孜然羊肉串</td><td>10串</td></tr>
+                <tr><td>極品松坂肉</td><td>300g</td></tr>
+                <tr><td>頂級羊小排</td><td>10支</td></tr>
+               </tbody>
+            </table>
+            </div>
+            
+            <h3 id="seafood">海鮮</h3>
+            <div class="foodmenuwrap">
+            <table class="table table-condensed foodlist connectedSortable">
+               <tbody> 
+                <tr><td>鯛魚腹排</td><td>1份</td></tr>
+                <tr><td>極品一夜干鮸魚</td><td>1條</td></tr>
+                <tr><td>炭烤扇貝10個</td><td>1盒</td></tr>
+                <tr><td>日式烤魚(一夜干)</td><td>1條</td></tr>
+                <tr><td>鱈魚燒</td><td>10片</td></tr>            
+                <tr><td rel="images/pizza.jpg" class="show">章魚燒比薩(5吋)</td><td>2個</td></tr>
+                <tr><td rel="images/cod5.jpg" class="show" title="">塔香鱈枝揚</td> <td>10個</td> </tr>
+                <tr><td rel="images/jpspray.jpg" class="show">和風花枝燒</td><td>10條</td></tr>
+                <tr><td rel="images/sprayroll.jpg" class="show">香菜花枝捲</td><td>10個</td></tr>
+                <tr><td rel="images/shrimpsroll10.jpg" class="show">脆皮蔬菜蝦捲</td><td>10個</td></tr>
+                <tr><td rel="images/loofah.jpg" class="show">枸杞蛤蠣(或干貝)絲瓜</td><td>1盒</td></tr>
+                <tr><td rel="images/scollop.jpg" class="show">鮮味水晶干貝</td><td>10顆</td></tr>
+                <tr><td>上品九孔鮑魚 </td><td>10個</td></tr>
+                <tr><td>甜蝦</td> <td>10隻</td></tr>
+                <tr><td>紅麴五花肉</td> <td>300g</td></tr>
+              </tbody>
+            </table>
+            </div>
+            
+            <h3 id="vegetable">菜/菇/其他類</h3>
+            <div class="foodmenuwrap">
+            <table class="table table-condensed foodlist connectedSortable">
+               <tbody> 
+                <tr><td rel="images/beancurd.jpg" class="show">大溪五香豆干</td><td>10片</td></tr>
+                <tr><td rel="images/ricecake2.jpg" class="show">古早味糯米糕</td><td>10片</td></tr>
+                <tr><td >中華百頁</td><td>10片</td></tr>                        
+                <tr><td rel="images/corn.jpg" class="show">香甜玉米1/4 20個 (約650克)<br><span style="color:red">或</span> 季節時蔬一盒</td><td></td></tr>                
+                <tr><td rel="images/tenpura10.jpg" class="show">甜不辣</td><td>10片</td></tr>
+                <tr><td rel="images/mushrooms2.jpg" class="show">奶香金針菇燒烤盒</td><td>1盒</td></tr>
+                <tr><td rel="images/corn.jpg" class="show">香甜玉米 1/4</td><td>20個</td></tr>
+                <tr><td rel="images/mushrooms.jpg" class="show">季節時蔬(或香菇)</td><td>1盒</td></tr>
+                <tr><td rel="images/pleurotus.jpg" class="show">椒鹽杏鮑菇</td><td>1盒</td></tr>
+                <tr><td >香頌蔬菜烤餅</td><td>10個</td></tr>
+                <tr><td rel="images/mochi.jpg" class="show">和風黑糖麻糬(甜品)</td><td>10個</td></tr>
+                <tr><td rel="images/pagetofu.jpg" class="show">野菜百頁</td><td>10片</td></tr>
+                <tr><td rel="images/mushrooms.jpg" class="show">碳烤生鮮香菇</td><td>1盒</td></tr>
+                <tr> <td>椒鹽四季豆</td> <td>1盒</td></tr>
+               </tbody>
+            </table>
+            </div>
+            
+            
+            <h3 id="drink">飲品/用具類</h3>
+            <div class="foodmenuwrap">
+            <table class="table table-condensed foodlist connectedSortable">      
+               <tbody>
+                <tr><td rel="images/cola2.jpg" class="show">2公升可樂</td><td>1瓶</td></tr>                        
+                <tr><td rel="images/toast.jpg" class="show" title="">手工吐司</td><td>1條</td></tr>
+                <tr><td rel="images/Water.jpg" class="show">大瓶礦泉水</td><td>1瓶</td></tr>
+                <tr><td>烤肉醬</td><td>1瓶</td></tr>
+                <tr><td rel="images/acc.jpg" class="show">佐料包</td><td>全套</td></tr>  
+                <tr><td>烤肉用具組(十人)</td><td>全套</td></tr>
+               </tbody>
+            </table>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+
+
+<div id="about-dialog" class="modal fade" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+        <h3 style="margin-top:0">為何製作此工具?</h3>
+        <p>網頁上的菜單，因具有菜色照片預覽功能，在 HTML 中夾帶著一些額外的屬性或超連結，如遇到換季或需要大幅調整菜單的狀況，無法使用一般的所見即所得網頁工具加快處理流程。故製作此工具。</p>
+        
+        <h3>使用方法?</h3>
+        <p>1.將所有菜色的 html 排於右側區塊內。<br>
+        2.將選定的菜色移至左邊菜單。<br>
+        3.按下產生 HTML。
+        4.將產生的 HTML 貼回菜單內。
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">關閉</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="htmlcode" class="modal fade" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">您的菜單原始碼:</h4>
+      </div>
+      <div class="modal-body">
+        <textarea id="htmlcode_result"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">關閉</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div id="pagedialog" class="modal fade" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">提示</h4>
+      </div>
+      <div class="modal-body">
+        是否確定清空暫存菜單?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success btn_confirm" data-dismiss="modal">確定清空</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Open source code -->
+<script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script>
+    //選擇店家
+    $('.btn_showstoreA').click(function(){
+        var store_selectd = $(this).text();
+        $('.storeA').fadeIn();
+        $('.storeB').hide();
+        $('.store_selectd>span').text(store_selectd);
+    });
+    $('.btn_showstoreB').click(function(){
+        var store_selectd = $(this).text();
+        $('.storeB').fadeIn();
+        $('.storeA').hide();
+        $('.store_selectd>span').text(store_selectd);
+    });
+    
+    
+    //菜單控制
+    $( '.foodmenuwrap').sortable({
+       connectWith: '.foodmenuwrap',
+       items: 'table > tbody > *',
+       receive: function(ev, ui) {
+            ui.item.children().removeClass('found');
+            ui.item.parent().find('table > tbody').append(ui.item);
+       },
+       remove: function(event, ui) {
+            ui.item.clone().append('<label><input type=\'checkbox\' class=\'isnew\'>NEW</label><label><input type=\'checkbox\' class=\'isgift\'>加贈<label>').insertAfter(ui.item);
+            $(this).sortable('cancel');
+       }
+    }).disableSelection();
+    
+    $( '.tempmenuouter').sortable({
+       connectWith: '.foodmenuwrap'
+    }).disableSelection();
+    
+    //菜色選項
+    $('.tempmenu').on('click', '.isnew', function(){
+        if($(this).prop('checked') == true) $(this).parent().prev().prev().prepend('<img src=\'images/new.gif\'>');     
+        else $(this).parent().prev().prev().find('img').remove();  
+    })
+  
+    $('.tempmenu').on('click', '.isgift', function(){
+        if($(this).prop('checked') == true) $(this).parent().prev().prev().prev().append('<span style=\'color:red\'>加贈</span>');
+        else $(this).parent().prev().prev().prev().find('span').remove(); 
+    })
+    
+
+    //清空    
+    var tempmenu_basic = "<tbody><tr><td rel='images/toast.jpg' class='show' title=''>手工吐司</td><td>1條</td></tr><tr><td rel='images/Water.jpg' class='show'>大瓶礦泉水</td><td>1瓶</td></tr><tr><td>烤肉醬</td><td>1瓶</td></tr><tr><td rel='images/acc.jpg' class='show'>佐料包</td><td>全套</td></tr><tr><td>烤肉用具組(十人)</td><td>全套</td></tr></tbody>";
+    
+    $('.cleartempmenu').click(function(){
+        $('#pagedialog').modal();     
+    })
+    
+    $('.btn_confirm').click(function(){
+        $('.tempmenu').html(tempmenu_basic);
+    })
+        
+    //搜尋
+    var foodlist ="";
+    function matchfood(){        
+        $('.foodlist td').each(function(){
+            var thistext = $('#searchfood').val();
+            var foodname = $(this).html();            
+            if (foodname.search(thistext) != -1) {            
+                $(this).addClass('found');
+                $(this).siblings().removeClass('found');
+            }            
+        }); 
+    }
+    $('#searchfood').blur(function(){       
+        if ($(this).val() !="") matchfood();
+        else $('.foodlist td').removeClass('found');
+        //if (foodlist == "") alert('查無此食材');        
+    });
+    $('#searchfood').keyup(function() {
+        if ($(this).val() !="") matchfood();  
+        else $('.foodlist td').removeClass('found');
+    });
+    
+    //smoothscroll
+    $('a[href*="#"]:not([href="#"])').click(function() {
+    if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') && location.hostname == this.hostname) {
+          var target = $(this.hash);
+          target = target.length ? target : $('[name=' + this.hash.slice(1) +']');
+          if (target.length) {
+            $('html, body').animate({
+              scrollTop: target.offset().top
+            }, 1000);
+            return false;
+          }
+        }
+     });
+
+  //產生html
+  $('.tempmenubtn').click(function(){
+      $('.tempmenu label').remove();
+      var menuhtml = $('.tempmenu').html(); 
+      menuhtml = menuhtml.replace(/ class=\"ui-sortable-handle\"/g, ""); 
+      menuhtml = menuhtml.replace(/<label>(.*)<\/label>/g, ""); 
+     $('#htmlcode_result').val(menuhtml);
+  });      
+  
+  
+    
+  
+</script>
+
+<!-- Twitter Bootstrap -->
+<script src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+<!-- Material Design for Bootstrap -->
+<script src="js/material.js"></script>
+<script src="js/ripples.min.js"></script>
+<script>
+  $.material.init();
+</script>
+
+
+<!-- Dropdown.js -->
+<script src="https://cdn.rawgit.com/FezVrasta/dropdown.js/master/jquery.dropdown.js"></script>
+<script>
+  $("#dropdown-menu select").dropdown();
+</script>
+
+</body>
+</html>
