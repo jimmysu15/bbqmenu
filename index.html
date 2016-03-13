@@ -6,6 +6,7 @@
   <title>菜單產生器</title>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
   <meta name="robots" content="noindex">
 
   <!-- Material Design fonts -->
@@ -25,24 +26,30 @@
   <!-- Page style -->
   <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
   <style>
-      body{font-size:15px}
+      body{font-size:15px;min-width:1170px;}
+      .btn.active.focus, .btn.active:focus, .btn.focus, .btn:active.focus, .btn:active:focus, .btn:focus {outline:0;}
+      h2, h3{font-family: "文泉驛正黑","WenQuanYi Zen Hei","儷黑 Pro","LiHei Pro",Meiryo,"微軟正黑體","Microsoft JhengHei",sans-serif}
+      .container{width: 1170px;}
       .navbar .navbar-brand{color:#fff;font-weight:bold}
+      .store_selectd{font-weight:bold}
       tr>td:nth-child(2){text-align: right;width:100px;}
       .table-condensed>tbody>tr>td{padding-left: 30px}
       tr{background: #fff}
       .ui-state-highlight { height: 1.5em; line-height: 1.2em; }
       .ui-sortable-helper {display: table;}      
       
-      .tempmenu{margin-bottom: 0}
+      .tempmenu{margin-bottom: 0;}
       .tempmenu td{}
       .tempmenu tr{cursor:n-resize;background: none}
-      .tempmenu label{position:absolute;width: 110px;margin-left: 15px;margin-top: 2px;}
-      .tempmenu label:hover{color:#000;cursor:pointer}
-      .tempmenu label+label{margin-left: 75px}
-      .tempmenuwrap{background: #F8FFDF;padding:10px}
+      .tempmenu label{position:absolute;width: 110px;margin-left: 15px;margin-top: 5px;font-size: 13px;color:#555}
+      .tempmenu label:hover{color:#1478ea;cursor:pointer}
+      .tempmenu label+label{margin-left: 65px}
+      .tempmenuwrap{background: #F8FFDF;padding:10px;box-shadow: 0 5px 10px #ddd;}
+      .del{cursor:pointer;color:#FF2722;position: absolute;left:-5px;margin-top: 3px;font-size: 20px;padding: 0 5px}
+      .del:hover{background: #FF2722;color:#fff}
       
       .foodlist{box-shadow: 0 5px 10px #ddd}
-      .foodlist tr{cursor:e-resize}
+      .foodlist tr{cursor:e-resize;background: none}
       .show::before{
 /*        content:'*';color:red; margin-left: -10px;*/
           content:'';
@@ -65,26 +72,21 @@
 <body>
 
 <div class="navbar navbar-warning">
-              <div class="container-fluid">
+              <div class="container">
                 <div class="navbar-header">
                   <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-warning-collapse">
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                   </button>
-                  <a class="navbar-brand" href="javascript:void(0)">菜單 HTML 快速產生器</a>
+                  <a class="navbar-brand" href="javascript:void(0)">菜單快速排序 HTML 產生器</a>
                 </div>
                 <div class="navbar-collapse collapse navbar-warning-collapse">
                   <ul class="nav navbar-nav">
                     <li><a href="javascript:void(0)" data-toggle="modal" data-target="#about-dialog">關於</a></li>
-                    <li><a href="javascript:void(0)" data-toggle="modal" data-target="#howtouse-dialog">關於</a></li>                    
+                    <li><a href="javascript:void(0)" data-toggle="modal" data-target="#howtouse-dialog">如何使用</a></li>
                     <li><a href="javascript:void(0)" class="cleartempmenu">清空</a></li>                    
                   </ul>
-                  <form class="navbar-form navbar-right">
-                    <div class="form-group">
-                      <input type="text" class="form-control col-sm-8" placeholder="搜尋菜色" id="searchfood">
-                    </div>
-                  </form>
                   <ul class="nav navbar-nav navbar-right">
                     <li class="dropdown active">
                       <a href="javascript:void(0)" data-target="#" class="dropdown-toggle store_selectd" data-toggle="dropdown"><span>店家A</span>
@@ -93,12 +95,13 @@
                         <li><a href="javascript:void(0)" class="btn_showstoreA">店家A</a></li>
                         <li><a href="javascript:void(0)" class="btn_showstoreB">店家B</a></li>                        
                       </ul>
-                    </li>   
-                    <li class="storeA"><a href="#meat">肉類</a></li>
-                    <li class="storeA"><a href="#seafood">海鮮</a></li>
-                    <li class="storeA"><a href="#vegetable">菜/菇/其他類</a></li>
-                    <li class="storeA"><a href="#drink">飲品/用具類</a></li>                    
+                    </li>                                          
                   </ul>
+                  <form class="navbar-form navbar-right">
+                    <div class="form-group">
+                      <input type="text" class="form-control col-sm-8" placeholder="搜尋菜色" id="searchfood">
+                    </div>
+                  </form>
                 </div>
               </div>
             </div>
@@ -106,12 +109,12 @@
 <div class="container">
     <div class="row">
         <div class="col-xs-5 sortwrap">
-           <h2 id="meat">請將菜色拖曳到此處</h2>
+           <h2 id="meat">暫存菜單區<small>請將菜色拖曳到此處</small></h2>
            <div class="foodmenuwrap tempmenuouter">
                <div class="tempmenuwrap">
                 <table class="table table-condensed foodmenu connectedSortable tempmenu"> 
                    <tbody>
-                    <tr><td rel="images/toast.jpg" class="show" title="">手工吐司</td><td>1條</td></tr>
+                    <tr><td rel="images/toast.jpg" class="show">手工吐司</td><td>1條</td></tr>
                     <tr><td rel="images/Water.jpg" class="show">大瓶礦泉水</td><td>1瓶</td></tr>
                     <tr><td>烤肉醬</td><td>1瓶</td></tr>
                     <tr><td rel="images/acc.jpg" class="show">佐料包</td><td>全套</td></tr>  
@@ -126,14 +129,13 @@
             <br>尚未將菜色建檔...
         </div>
         <div class="col-xs-6 col-xs-offset-1 basicwrap storeA">
-          
-<!--
-          <div class="input-group">
-              <input type="text" class="form-control">    
-              <button class="btn btn-default searchitem"><span class="glyphicon glyphicon-search"></span>搜尋菜色</button>
-          </div>
-        <p>快速連結:<a href="#meat">肉類</a>/<a href="#seafood">海鮮</a>/<a href="#vegetable">菜/菇/其他類</a>/<a href="#drink">飲品/用具類</a></p>
--->
+          <h2>店家 A 菜色區 
+              <small>
+                  <span class="storeA">
+                      <a href="#meat">肉類</a> / <a href="#seafood">海鮮</a> / <a href="#vegetable">菜/菇/其他類</a> / <a href="#drink">飲品/用具類</a>
+                  </span>
+              </small>
+          </h2>
           
           <h3 id="meat">肉類</h3>
           <div class="foodmenuwrap">
@@ -230,7 +232,7 @@
     <div class="modal-content">
       <div class="modal-body">
         <h3 style="margin-top:0">為何製作此工具?</h3>
-        <p>網頁上的菜單，因具有菜色照片預覽功能，在 HTML 中夾帶著一些額外的屬性或超連結，如遇到換季或需要大幅調整菜單的狀況，無法使用一般的所見即所得網頁工具加快處理流程。故製作此工具。</p>        
+        <p>原網頁上的菜單，因具有菜色照片預覽功能，在 HTML 中夾帶著一些額外的屬性或超連結。如遇到需要大幅調整菜單的狀況，無法使用一般的所見即所得網頁編輯器。故製作此工具，加快處理流程。</p>        
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-dismiss="modal">關閉</button>
@@ -321,13 +323,14 @@
             ui.item.parent().find('table > tbody').append(ui.item);
        },
        remove: function(event, ui) {
-            ui.item.clone().append('<label><input type=\'checkbox\' class=\'isnew\'>NEW</label><label><input type=\'checkbox\' class=\'isgift\'>加贈<label>').insertAfter(ui.item);
+            ui.item.children().removeClass('found');
+            ui.item.clone().append('<label><input type=\'checkbox\' class=\'isnew\'>NEW</label><label><input type=\'checkbox\' class=\'isgift\'>加贈</label><span class=\'del\'>X</span>').insertAfter(ui.item);
             $(this).sortable('cancel');
        }
     }).disableSelection();
     
     $( '.tempmenuouter').sortable({
-       connectWith: '.foodmenuwrap'
+       connectWith: '.tempmenuwrap'
     }).disableSelection();
     
     //菜色選項
@@ -339,6 +342,11 @@
     $('.tempmenu').on('click', '.isgift', function(){
         if($(this).prop('checked') == true) $(this).parent().prev().prev().prev().append('<span style=\'color:red\'>加贈</span>');
         else $(this).parent().prev().prev().prev().find('span').remove(); 
+    })
+    
+    $('.tempmenu').on('click', '.del', function(){
+        var thisname= $(this).prev().prev().prev().prev().text();
+        if(confirm("確定從暫存菜單中移除"+ thisname +"?")) $(this).parent().fadeOut().remove();
     })
     
 
@@ -391,7 +399,7 @@
 
   //產生html
   $('.tempmenubtn').click(function(){
-      $('.tempmenu label').remove();
+      //$('.tempmenu label').remove();
       var menuhtml = $('.tempmenu').html(); 
       menuhtml = menuhtml.replace(/ class=\"ui-sortable-handle\"/g, ""); 
       menuhtml = menuhtml.replace(/<label>(.*)<\/label>/g, ""); 
